@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Carteira</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>📊 Otimizador de Carteira</h1>
+
+    <form method="POST">
+
+        <div class="grid">
+
+            <div class="card">
+                <h3>Carteira</h3>
+                <textarea name="carteira">{{ request.form.carteira or "" }}</textarea>
+            </div>
+
+            <div class="card">
+                <h3>Universo</h3>
+                <textarea name="universo">{{ request.form.universo or "" }}</textarea>
+            </div>
+
+            <div class="card">
+                <h3>Views</h3>
+                <textarea name="views">{{ request.form.views or "" }}</textarea>
+            </div>
+
+        </div>
+
+        <button type="submit">🚀 Rodar Otimização</button>
+    </form>
+
+    {% if resultado %}
+
+    <div class="results">
+
+        <div class="card highlight">
+            <h2>💰 Valor Total</h2>
+            <p class="big">R$ {{ "%.2f"|format(resultado.valor_total) }}</p>
+        </div>
+
+        <div class="card">
+            <h2>📊 Pesos</h2>
+            <table>
+                <tr><th>Ativo</th><th>Peso</th></tr>
+                {% for k, v in resultado.pesos.items() %}
+                    {% if v > 0 %}
+                    <tr>
+                        <td>{{ k }}</td>
+                        <td>{{ "%.2f"|format(v * 100) }}%</td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>📈 Rebalanceamento</h2>
+            <table>
+                <tr><th>Ativo</th><th>Qtd</th></tr>
+                {% for k, v in resultado.rebalanceamento.items() %}
+                <tr>
+                    <td>{{ k }}</td>
+                    <td>{{ "%.2f"|format(v) }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <p>Sobra: <b>R$ {{ "%.2f"|format(resultado.sobra) }}</b></p>
+        </div>
+
+        <div class="card">
+            <h2>🌍 Diversificação</h2>
+            <table>
+                <tr><th>Ativo</th><th>Correlação</th></tr>
+                {% for ativo, score in resultado.diversificacao %}
+                <tr>
+                    <td>{{ ativo }}</td>
+                    <td>{{ "%.2f"|format(score) }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
